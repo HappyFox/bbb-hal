@@ -1,6 +1,10 @@
 import asyncio
+import logging
 
-logger = None
+import bbb_hal.robot as robot
+
+logger = logging.getLogger("HAL.Server")
+config = None
 
 
 class HalProtocol(asyncio.Protocol):
@@ -21,13 +25,14 @@ class HalProtocol(asyncio.Protocol):
         print('Close the client socket')
         self.transport.close()
 
-def init_and_run(logger_, path):
-    global logger
-    logger = logger_
+def start(config_):
+    global config
+    config = config_
 
+    logger.info("Starting server on {}".format(config["sock_path"]))
     loop = asyncio.get_event_loop()
     # Each client connection will create a new protocol instance
-    coro = loop.create_unix_server(HalProtocol, path)
+    coro = loop.create_unix_server(HalProtocol, config["sock_path"])
     server = loop.run_until_complete(coro)
 
     try:
