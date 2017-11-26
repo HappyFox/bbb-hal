@@ -1,11 +1,11 @@
 #standard python libs
 import logging
-import json
 import time
 
 #third party libs
 from daemon import runner
 
+import bbb_hal.common as common
 import bbb_hal.server as server
 import bbb_hal.robot as robot
 
@@ -32,13 +32,10 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-def load_config():
-    with open("/usr/local/etc/bbb-hal.conf", 'r') as conf_file:
-        config = json.load(conf_file)
-    return config
 
 
-app = App(load_config())
+
+app = App(common.load_config())
 
 daemon_runner = runner.DaemonRunner(app)
 #This ensures that the logger file handle does not get closed during daemonization
